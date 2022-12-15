@@ -38,30 +38,105 @@ void transpose(int r, int c, int mat1[r][c], int mat2[c][r]){
 
 }
 
-int main(){
-	//first we will input a matrix by the user !
-	int r,c;
-	printf("Enter number of rows : ");
-	scanf("%d",&r);
-	printf("Enter number of columns: ");
-	scanf("%d",&c);
-
-	int mat[r][c];
-	int transposeMat[c][r];
-
-	for(int i = 0; i < r; i++){
-		for(int j = 0; j < c; j++){
-			printf("Enter element {%d:%d} > ",i,j);
-			int ele;
-			scanf("%d",&ele);
-			mat[i][j] = ele;
+void addition(int n1,int n2, int mat1[n1][n2],int mat2[n1][n2],int mat3[n1][n2]){
+	for(int i = 0; i < n1; i++){
+		for(int j = 0; j < n2; j++){
+			mat3[i][j] = mat1[i][j] + mat2[i][j];
 		}
 	}
+}
+
+int* minorArray(int n1, int n2, int mat[3][3]){
+	int arr[4];
+	int k = 0;
+	while(k != 4){
+		for(int i = 0; i < 3; i++){
+			for(int j = 0; j < 3; j++){
+				if(i != n1 && j != n2){
+					arr[k] = mat[i][j];
+					k++;
+				}
+			}
+		}
+	}
+	return arr;
+}
+
+int main(){
+
+	// we will ask user for their choice !
+	int choice;
+	printf("Transpose -> 1\nAddition -> 2\n");
+	printf("Enter your choice > ");
+	scanf("%d",&choice);
+
+	if(choice == 1){
+	//first we will input a matrix by the user !
+		int r,c;
+		printf("Enter number of rows : ");
+		scanf("%d",&r);
+		printf("Enter number of columns: ");
+		scanf("%d",&c);
+
+		int mat[r][c];
+		int transposeMat[c][r];
+
+		for(int i = 0; i < r; i++){
+			for(int j = 0; j < c; j++){
+				printf("Enter element {%d:%d} > ",i,j);
+				int ele;
+				scanf("%d",&ele);
+				mat[i][j] = ele;
+			}
+		}
+		printf("\nNormal Matrix\n");
+		displayMatrix(r,c,mat);
+		transpose(r,c,mat,transposeMat);
+		printf("\nTranspose Matrix\n");;
+		displayMatrix(c,r,transposeMat);
+	}
+	else if(choice == 2){
+		// we will input two matrixes by user
+		int r;
+		int c;
+		printf("Enter number of rows > ");
+		scanf("%d",&r);
+		printf("Enter number of columns > ");
+		scanf("%d",&c);
+
+		int mat1[r][c];
+		int mat2[r][c];
+		int mat3[r][c];
 	
-	displayMatrix(r,c,mat);
-	transpose(r,c,mat,transposeMat);
-	displayMatrix(c,r,transposeMat);
-	
+		printf("\nFirst Matrix Input");
+		for(int i = 0; i < r; i++){
+			for(int j = 0; j < c; j++){
+				printf("Enter element {%d:%d} > ",i,j);
+				int ele;
+				scanf("%d",&ele);
+				mat1[i][j] = ele;
+			}
+		}
+		displayMatrix(r,c,mat1);
+
+		printf("Second Matrix Input\n");
+
+		for(int i = 0; i < r; i++){
+			for(int j = 0; j < c; j++){
+				printf("Enter element {%d:%d} > ",i,j);
+				int ele;
+				scanf("%d",&ele);
+				mat2[i][j] = ele;
+			}
+		}
+		displayMatrix(r,c,mat2);
+		printf("\n");
+		addition(r,c,mat1,mat2,mat3);
+		printf("The third matrix which is formed by addition of above two matrix : \n");
+		displayMatrix(r,c,mat3);
+	}
+
+
 	
 
 	return 0;

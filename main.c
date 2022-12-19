@@ -67,8 +67,7 @@ void multiplication(int r1, int c1, int r2, int c2,int mat1[r1][c1], int mat2[r2
 
 
 
-int* minorArray(int n1, int n2, int mat[3][3]){
-	int arr[4];
+void minorArray(int n1, int n2, int mat[3][3], int arr[4]){
 	int k = 0;
 	while(k != 4){
 		for(int i = 0; i < 3; i++){
@@ -80,20 +79,121 @@ int* minorArray(int n1, int n2, int mat[3][3]){
 			}
 		}
 	}
-	return arr;
 }
 
-int main(){
+int minorProduct(int arr[]){
+	return arr[0]*arr[3] - arr[1]*arr[2];
+}
 
+int nBynMinorProduct(int mat[2][2]){
+	return mat[0][0] * mat[1][1] - mat[0][1] * mat[1][0];
+}
+
+void adjoint(int n1, int n2, int mat1[n1][n2], int mat2[n1][n2],int mat3[n1][n2]){
+	for(int i = 0; i < n1; i++){
+		for(int j = 0; j < n2; j++){
+			if((i+j)%2 == 0){
+				int arr[4];
+				minorArray(i,j,mat1,arr);
+				mat2[i][j] = minorProduct(arr);
+			}
+			else{
+				int arr[4];
+				minorArray(i,j,mat1,arr);
+				mat2[i][j] = -1 * minorProduct(arr);
+
+			}
+		}
+	}
+	transpose(n1,n2,mat2,mat3);
+
+}
+
+int determinant(int n, int mat[n][n]){
+	int ans = 0;
+	for(int i = 0; i < n; i++){
+		// we will be creating subMatrix excluding 0th row and ith col
+		int k1 = 0;
+		int k2 = 0;
+		int subMat[n-1][n-1];
+            while (k1 != n - 1 && k2 != n - 1) {
+                for (int j = 0; j < n; j++) {
+                    for (int l = 0; l < n; l++) {
+                        if (j != 0 && l != i) {
+                            subMat[k1][k2] = mat[j][l];
+                            k2++;
+                        }
+                        if (k2 == n - 1) {
+                            k1++;
+                            k2 = 0;
+                        }
+                    }
+                }
+            }
+			// now we have the minor for the 0:i th elemenet
+			// if the length is 2 then simply find the minorproduct and add it to the answer
+			if(n-1 == 2){
+				int s = mat[0][i] * nBynMinorProduct(subMat);
+				if(i % 2 == 0){
+					ans += s;
+				}
+				else{
+					ans += (-1 * s);
+				}
+				
+			}
+			else{
+				int s = mat[0][i] * determinant(n-1,subMat);
+                if (i % 2 == 0) {
+                    ans += s;
+                } else {
+                    ans += (-1 * s);
+                }
+			}
+	}
+	return ans;
+}
+
+void inverse(int n1, int n2, int mat1[n1][n2], int mat2[n1][n2],int mat3[n1][n2]){
+	for(int i = 0; i < n1; i++){
+		for(int j = 0; j < n2; j++){
+			if((i+j)%2 == 0){
+				int arr[4];
+				minorArray(i,j,mat1,arr);
+				mat2[i][j] = minorProduct(arr);
+			}
+			else{
+				int arr[4];
+				minorArray(i,j,mat1,arr);
+				mat2[i][j] = -1 * minorProduct(arr);
+
+			}
+		}
+	}
+	transpose(n1,n2,mat2,mat3);
+
+	
+
+}
+
+
+
+int main(){
+	
 	// we will ask user for their choice !
 	int choice;
 	printf("Transpose -> 1\n");
 	printf("Addition -> 2\n");
 	printf("Subtraction -> 3\n");
 	printf("Multiplication -> 4\n");
-	printf("Enter your choice > \n");
+	printf("Adjoint -> 5\n");
+	printf("Determinant -> 6\n");
+	printf("Inverse -> 7\n");
+	printf("Enter your choice > ");
 
 	scanf("%d",&choice);
+
+	printf("\n");
 
 	if(choice == 1){
 	//first we will input a matrix by the user !
@@ -293,8 +393,136 @@ int main(){
 		}
 	}
 
+	else if(choice == 5){
+
+		//first we will input a matrix by the user !
+		int r,c;
+		printf("Enter number of rows : ");
+		scanf("%d",&r);
+		printf("Enter number of columns: ");
+		scanf("%d",&c);
+
+		if(r != c){
+			printf("rows and columns must be equal for adjoint !");
+		}
+		else{
+		int mat[r][c];
+		int adjointMat1[r][c];
+		int adjointMat2[r][c];
+
+		for(int i = 0; i < r; i++){
+			for(int j = 0; j < c; j++){
+				printf("Enter element {%d:%d} > ",i,j);
+				int ele;
+				scanf("%d",&ele);
+				mat[i][j] = ele;
+			}
+		}
+		printf("\nNormal Matrix\n");
+		displayMatrix(r,c,mat);
+		adjoint(r,c,mat,adjointMat1,adjointMat2);
+		printf("\nadjoint Matrix\n");;
+		displayMatrix(c,r,adjointMat2);
+		}
 
 
+
+
+	}
+
+	else if(choice == 6){
+		//first we will input a matrix by the user !
+		int r,c;
+		printf("Enter number of rows : ");
+		scanf("%d",&r);
+		printf("Enter number of columns: ");
+		scanf("%d",&c);
+
+		if(r != c){
+			printf("rows and columns must be equal for determinant !");
+		}
+		else{	
+		int mat[r][c];
+		for(int i = 0; i < r; i++){
+			for(int j = 0; j < c; j++){
+				printf("Enter element {%d:%d} > ",i,j);
+				int ele;
+				scanf("%d",&ele);
+				mat[i][j] = ele;
+			}
+		}
+		printf("The determinant is > %d",determinant(r,mat));
+		}
+
+	}
+
+	else if(choice == 7){
+		//first we will input a matrix by the user !
+		int r,c;
+		printf("Enter number of rows : ");
+		scanf("%d",&r);
+		printf("Enter number of columns: ");
+		scanf("%d",&c);
+
+		if(r != c){
+			printf("rows and columns must be equal for inverse !");
+		}
+		else{
+		int mat[r][c];
+		int inverseMat1[r][c];
+		int inverseMat2[r][c];
+
+		for(int i = 0; i < r; i++){
+			for(int j = 0; j < c; j++){
+				printf("Enter element {%d:%d} > ",i,j);
+				int ele;
+				scanf("%d",&ele);
+				mat[i][j] = ele;
+			}
+		}
+		printf("\nNormal Matrix\n");
+		displayMatrix(r,c,mat);
+		adjoint(r,c,mat,inverseMat1,inverseMat2);
+		int d = determinant(r,mat);
+
+		if(d != 0){
+			printf("\nInverse Matrix\n");
+			for(int i =0; i < r; i++)
+			{
+				if(i == 0){
+					for(int j = 0; j < c; j ++){
+						printf("______");
+					}
+					printf("_\n");
+				}
+				for(int j = 0; j < c; j++){
+					if(j == 0){
+						printf("|");
+					}
+					if(inverseMat2[i][j] < 0 || inverseMat2[i][j] >= 10){
+						printf("%d/%d",inverseMat2[i][j],d);
+					}
+					else{
+						printf(" %d/%d",inverseMat2[i][j],d);
+					}
+					printf("|");
+				}
+					printf("\n");
+				for(int j = 0; j < c; j ++){
+					printf("______");
+				}
+				printf("_\n");
+			}
+		}
+		else{
+			printf("The determinant is 0, therefore no inverse matrix !");
+		}
+	
+
+
+	}
+
+	}
 	
 
 	return 0;
